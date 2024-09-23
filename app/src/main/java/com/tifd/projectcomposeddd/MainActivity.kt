@@ -16,9 +16,10 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountBox
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -30,6 +31,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.tifd.projectcomposeddd.ui.theme.ProjectComposeDDDTheme
@@ -41,20 +43,20 @@ class MainActivity : ComponentActivity() {
             ProjectComposeDDDTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
                 ) {
                     MyScreen()
-                }
-            }
+                }}
         }
     }
 }
 
 @Composable
 fun MyScreen() {
-    var text by remember { mutableStateOf("") }
-    var inputText by remember { mutableStateOf("") }
-    var nimText by remember { mutableStateOf("") }
+    var nama by remember { mutableStateOf("") }
+    var inputNama by remember { mutableStateOf("") }
+    var nim by remember { mutableStateOf("") }
+    var inputNim by remember { mutableStateOf("") }
+    val isFormFilled = inputNama.isNotBlank() && inputNim.isNotBlank()
 
     Column(
         modifier = Modifier
@@ -63,9 +65,11 @@ fun MyScreen() {
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = text)
+        Text(text = nama)
+        Text(text = nim)
+        
         Spacer(modifier = Modifier.height(16.dp))
-        Row (
+        Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -77,29 +81,49 @@ fun MyScreen() {
             )
             Spacer(modifier = Modifier.width(8.dp))
             OutlinedTextField(
-                value = inputText,
-                onValueChange = { inputText = it},
-                label = { Text("Masukkan nama")},
+                value = inputNama,
+                onValueChange = { inputNama = it },
+                label = { Text("Masukkan nama") },
                 modifier = Modifier.weight(1f).fillMaxWidth(),
                 shape = RoundedCornerShape(8.dp)
             )
         }
         Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = nimText,
-            onValueChange = {
-                if (it.all { char -> char.isDigit() }) {
-                    nimText = it
-                }
-            },
-            label = { Text("Masukkan NIM") },
-            modifier = Modifier.fillMaxWidth(),
-            shape = RoundedCornerShape(8.dp)
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Icon(
+                imageVector = Icons.Filled.Person,
+                contentDescription = "Icon Profile",
+                tint = Color.Blue,
+                modifier = Modifier.size(25.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            OutlinedTextField(
+                value = inputNim,
+                onValueChange = {
+                    if (it.all { char -> char.isDigit() }) {
+                        inputNim = it
+                    }
+                },
+                label = { Text("Masukkan NIM") },
+                modifier = Modifier.weight(1f).fillMaxWidth(),
+                shape = RoundedCornerShape(8.dp)
+            )
+        }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = {
-            text = "Nama: $inputText, NIM: $nimText"
-        }) {
+        Button(
+            onClick = {
+                nama = inputNama
+                nim = inputNim
+            },
+            modifier = Modifier.fillMaxWidth(),
+            enabled = isFormFilled,
+            colors = ButtonDefaults.buttonColors(
+                disabledContainerColor = Color.Gray
+            )
+        ) {
             Text("Submit")
         }
     }
